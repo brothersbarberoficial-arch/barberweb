@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Barberia VIP</title>
+    <title>Barberia VIP</title>
+    <style>
+html {
+    scroll-behavior: smooth;
+}
+        body {
+            background-image: url('barberiaintro.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+
+background-color: rgba(0, 0, 0, 0.6); 
+background-blend-mode: darken;
+
+        }
+        button {
+            background-color: #d4af37;
+            border: none;
+            padding: 15px 25px;
+            font-size: 14px;
+            display: inline-block;
+            margin: 10px 5px;
+            vertical-align: top;
+            width: auto;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: 0.3s;
+
+            color: black;
+            font-weight: bold;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background-color: #f1c40f;
+        }
+
+@media screen and (max-width: 600px) {
+    button {
+        display: block !important;    
+        width: 90% !important;        
+        margin: 15px auto !important; 
+        float: none !important;       
+        clear: both !important;     
+    }
+    
+    body {
+        padding: 10px !important;
+    }
+}
+
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.logo-carga {
+    width: 120px; 
+    height: auto;
+    animation: latido 2s ease-in-out infinite;
+    filter: none;
+    
+}
+
+@keyframes latido {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+}
+
+.titulo-marca {
+    color: #ffffff;
+    font-size: 55px;
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: 5px;
+    font-family: 'Arial Black', sans-serif;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+}
+
+.frase-impacto {
+    color: #f1f1f1;
+    font-size: 22px;
+    text-align: center;
+    margin-top: 0;
+    font-family: 'Arial', sans-serif;
+    font-style: italic;
+    font-weight: bold;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+}
+
+.menu-superior {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #f0f0f0;
+}
+.enlaces {
+    margin-right: 50px;
+}
+.enlaces a {
+    text-decoration: none;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 30px;
+    letter-spacing: 1px;
+}
+.enlaces a:hover {
+    color: #d4af37;
+}
+
+.contenedor-galeria {
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+    padding: 50px 20px;
+    flex-wrap: wrap; 
+}
+
+.tarjeta-servicio {
+    width: 250px; 
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.tarjeta-servicio img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover; 
+    border-radius: 8px;
+}
+
+.tarjeta-servicio h3 {
+    color: #ffffff; 
+    font-family: 'Arial Black', sans-serif;
+    font-size: 14px;
+    margin-top: 15px;
+    text-transform: uppercase;
+}
+
+.datos-inferiores {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 50px 20px;
+    background-color: #000;
+    border-top: 1px solid #d4af37;
+}
+
+.columna {
+    flex: 1;
+    min-width: 250px;
+    text-align: center;
+    color: white;
+}
+
+.redes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.redes a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white; 
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.redes a i {
+    color: #d4af37;
+    font-size: 20px;
+    margin-right: 10px;
+    width: 25px;            
+    text-align: center;
+}
+
+.whatsapp-flotante {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #25d366; 
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 35px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    z-index: 1000; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.3s;
+}
+
+.whatsapp-flotante:hover {
+    transform: scale(1.1);
+    background-color: #128c7e;
+}
+
+.menu-superior {
+    display: flex;
+    align-items: center;     
+    justify-content: space-between; 
+    padding: 10px 40px;      
+}
+
+.logo-barra {
+    height: 85px;             
+    width: auto;              
+    border-radius: 5px; 
+    margin-left: 100px;  
+    display: block;    
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#informacion {
+    opacity: 0; 
+    transition: all 0.5s ease;
+}
+
+#informacion.animar {
+    animation: aparecer 1.5s ease-out forwards;
+}
+
+.estrellas-rating {
+    font-size: 30px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #444; 
+}
+
+.estrella.activa {
+    color: #FFD700; 
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.resena-card .estrellas-fijas {
+    color: #FFD700;
+    display: block;
+    margin-bottom: 5px;
+}
+ .seccion-servicios {
+    display: grid !important;
+  
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px;
+    padding: 40px;
+    justify-items: center;
+}
+
+.tarjeta-servicio {
+    width: 250px !important;
+    text-align: center;
+}
+
+.tarjeta-servicio img {
+    width: 250px !important;
+    height: 250px !important;
+    object-fit: cover !important;
+    border-radius: 15px;
+}
+
+
+.tarjeta-servicio:nth-child(5) {
+    grid-column: 1 / -1 !important; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-servicio:nth-child(5) {
+    grid-column: 1 / -1 !important; 
+}
+
+.seccion-mapa-total {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #000;
+    overflow: hidden; 
+}
+
+.caja-ubicacion {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.caja-ubicacion iframe {
+    position: relative !important;
+    width: 100vw !important;     
+    left: 50% !important;           
+    right: 50% !important;
+    margin-left: -50vw !important;  
+    margin-right: -50vw !important;
+    height: 500px !important;
+    border: none !important;
+    display: block !important;
+}
+
+.caja-resenas {
+    background-color: #000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 20px !important;
+    padding: 60px 20px !important;
+}
+
+.caja-resenas input, 
+.caja-resenas textarea {
+    background-color: #111 !important; 
+    border: 1px solid #d4af37 !important; 
+    color: #fff !important; 
+    width: 100% !important;
+    max-width: 450px !important;
+    padding: 15px !important;
+    border-radius: 8px !important;
+    font-family: Arial, sans-serif !important;
+}
+
+.caja-resenas button {
+    background-color: #d4af37 !important; 
+    color: #000 !important;
+    font-weight: bold !important;
+    padding: 15px 50px !important;
+    border-radius: 30px !important;
+    border: none !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+}
+@media (max-width: 768px) {
+    
+    h1, .titulo-principal { 
+        font-size: 32px !important;
+        line-height: 1.1 !important;
+        padding: 0 10px !important;
+        text-align: center !important;
+    }
+
+    
+    h2, .subtitulo {
+        font-size: 18px !important;
+        margin-top: 10px !important;
+    }
+
+    
+    .seccion-servicios {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 20px !important;
+        gap: 30px !important;
+    }
+
+    
+    .seccion-servicios div {
+        width: 100% !important;
+        max-width: 300px !important;
+        margin: 0 auto !important;
+    }
+}
+.datos-inferiores {
+    display: flex !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    padding: 40px 5% !important;
+    background-color: #000;
+}
+
+.columna {
+    flex: 1 !important;
+    min-width: 250px !important;
+    text-align: center !important;
+    margin-bottom: 20px !important;
+}
+
+.redes-lista {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 15px !important;
+}
+.enlace-red {
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    transition: 0.3s !important;
+}
+.enlace-red i {
+    color: #ffcc00 !important; 
+    font-size: 26px !important;
+}
+.enlace-red span {
+    color: #ffffff !important; 
+    font-size: 18px !important;
+}
+.enlace-red:hover span {
+    color: #ffcc00 !important;
+
+    @media (max-width: 600px) {
+    
+    .menu-superior {
+        padding: 15px 0 !important;
+    }
+    .menu-superior nav ul {
+        flex-direction: column !important; 
+        align-items: center !important;
+        gap: 15px !important; 
+    }
+
+    .titulo-marca {
+        font-size: 32px !important; 
+        margin: 40px 0 !important; 
+        padding: 0 10px;
+    }
+
+    .servicios-container {
+        padding: 0 15px !important; 
+    }
+    .tarjeta-servicio {
+        margin-bottom: 40px !important; 
+        padding: 20px !important;
+        border-radius: 15px !important;
+    }
+
+    .whatsapp-flotante {
+        bottom: 100px !important; 
+        right: 20px !important;
+    }
+
+    .btn-cerrar-sesion {
+        width: 80% !important;
+        margin: 30px auto !important;
+        display: block !important;
+    }
+}
+}
+    </style>
+</head>
+<body>
+
+<nav class="menu-superior">
+<img src="brothers.png" class="logo-barra" alt="Logo Barbería">
+
+ <div class="enlaces">
+        <a href="#servicios">SERVICIOS</a>
+        <a href="#ubicacion">UBICACION</a>
+        <a href="reservas.html" target="_blank">RESERVAS</a>
+        <a href="#informacion">INFORMACIÓN</a>
+        <a href="#resenas">RESEÑAS</a>        
+    </div>
+</nav>
+
+<div id="loader">
+    <img src="logobarber.jpg" alt="Logo Barbería" class="logo-carga">
+</div>
+
+    <h1 class="titulo-marca">BIENVENIDO A BROTHER´S BARBER SHOP</h1>
+    <p class="frase-impacto">¡DISFRUTA DE LOS MEJORES!</p>
+ <div id="servicios" class="seccion-servicios">
+    <div class="tarjeta-servicio">
+        <img src="corteparaniño.jpeg" alt="Corte para niño">
+        <h3>CORTE PARA NIÑO</h3>
+    </div>
+    <div class="tarjeta-servicio">
+        <img src="cortesencillo.jpeg" alt="Corte sencillo adulto">
+        <h3>CORTE SENCILLO ADULTO</h3>
+    </div>
+    <div class="tarjeta-servicio">
+        <img src="corteconbarba.jpeg" alt="Corte con barba">
+        <h3>CORTE CON BARBA</h3>
+    </div>
+    <div class="tarjeta-servicio">
+        <img src="corteconcejas.jpeg" alt="Corte con cejas">
+        <h3>CORTE CON CEJAS</h3>
+    </div>
+    <div class="tarjeta-servicio">
+        <img src="cortecondiseño.jpeg" alt="Corte con diseños">
+        <h3>CORTE CON DISEÑOS</h3>
+    </div>
+
+    <hr> 
+
+</div> 
+<section id="ubicacion" class="seccion-mapa-total">
+        <hr> <h2>NUESTRA UBICACIÓN</h2>
+    <p>Visítanos y vive la mejor experiencia en barbería.</p>
+    
+    <div class="caja-ubicacion">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3982.527883745505!2d-76.502808!3d3.4725!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a6886e374555%3A0xbd910e7b76276868!2sCra.%203%20%2346-24%2C%20Cali%2C%20Valle%20del%20Cauca!5e0!3m2!1ses!2sco!4v1710000000000" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+</div>
+<div class="datos-inferiores seccion-info" id="informacion">
+    <div class="columna">
+        <h3>UBICACIÓN</h3>
+        <p><strong>DIRECCIÓN:</strong> Carrera 3 # 46-24, Santiago de Cali</p>
+        <p><strong>HORARIO:</strong> Mar - Dom: 9:00 AM - 10:00 PM</p>
+    </div>
+
+    <div class="columna">
+        <h3>CONTACTO DIRECTO</h3>
+        <p><strong>BARBERO:</strong> Jeison Esupiñan</p>
+        <p><strong>CELULAR:</strong> +57 320 5677284</p>
+    </div>
+
+    <div class="columna">
+        <h3>SÍGUENOS</h3>
+        <div class="redes-lista">
+            <a href="https://www.facebook.com/Jeyylonga" target="_blank" class="enlace-red">
+                <i class="fab fa-facebook"></i> <span>Jeyylonga</span>
+            </a>
+           <a href="https://www.instagram.com/brothers_barber_9398/" target="_blank" class="enlace-red">
+                <i class="fab fa-instagram"></i> <span>@brothers_barber_9398</span>
+            </a>
+            <a href="https://wa.me/573205677284" target="_blank" class="enlace-red">
+                <i class="fab fa-whatsapp"></i> <span>+57 320 5677284</span>
+            </a>
+        </div>
+    </div> </div>
+<section id="resenas" class="caja-resenas">
+    <h2>RESEÑAS DE CLIENTES</h2>
+    <input type="text" id="nombre-usuario" placeholder="Tu Nombre" required>
+<div class="estrellas-rating">
+        <span class="estrella" onclick="marcarEstrellas(1)">★</span>
+        <span class="estrella" onclick="marcarEstrellas(2)">★</span>
+        <span class="estrella" onclick="marcarEstrellas(3)">★</span>
+        <span class="estrella" onclick="marcarEstrellas(4)">★</span>
+        <span class="estrella" onclick="marcarEstrellas(5)">★</span>
+    </div>
+    <input type="hidden" id="valor-estrellas" value="0">
+    <textarea id="texto-resena" placeholder="¿Qué te pareció el servicio de Brother's?" rows="4"></textarea>
+    <button class="boton-publicar" onclick="publicarResena()">PUBLICAR RESEÑA</button>
+</div>
+
+<div id="contenedor-resenas"></div>
+    </section>
+
+<a href="https://wa.me/573205677284" class="whatsapp-flotante" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+
+window.addEventListener('scroll', function() {
+    var seccion = document.querySelector('#informacion'); 
+    if (seccion) {
+        var posicion = seccion.getBoundingClientRect().top;
+        var pantalla = window.innerHeight * 0.95;
+        if (posicion < pantalla) {
+            seccion.classList.add('animar');
+        }
+    }
+});
+
+
+window.onload = function() {
+    setTimeout(function() {
+        var loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    }, 2000); 
+};
+
+
+function agendarCita(servicio) {
+    alert("¡Excelente elección! Has seleccionado: " + servicio);
+}
+
+let ratingActual = 0;
+
+function marcarEstrellas(n) {
+    ratingActual = n;
+    document.getElementById('valor-estrellas').value = n;
+    let estrellas = document.querySelectorAll('.estrella');
+    estrellas.forEach((est, i) => {
+        est.classList.toggle('activa', i < n);
+    });
+}
+
+window.addEventListener('load', function() {
+    var guardadas = localStorage.getItem('misResenas');
+    if (guardadas) {
+        document.getElementById('contenedor-resenas').innerHTML = guardadas;
+    }
+});
+
+function publicarResena() {
+    var nombre = document.getElementById('nombre-usuario').value;
+    var texto = document.getElementById('texto-resena').value;
+    var estrellasVal = document.getElementById('valor-estrellas').value;
+    var contenedor = document.getElementById('contenedor-resenas');
+
+    if (nombre.trim() !== "" && texto.trim() !== "" && estrellasVal > 0) {
+        var nuevaResena = document.createElement('div');
+        nuevaResena.className = 'resena-card seccion-info animar'; 
+        
+    
+        let estrellasOro = "★".repeat(estrellasVal) + "☆".repeat(5 - estrellasVal);
+        
+        nuevaResena.innerHTML = `
+            <span class="estrellas-fijas">${estrellasOro}</span>
+            <strong>${nombre.toUpperCase()}</strong>
+            <p>${texto}</p>
+        `;
+        
+        contenedor.prepend(nuevaResena);
+        localStorage.setItem('misResenas', contenedor.innerHTML);
+
+        
+        document.getElementById('nombre-usuario').value = "";
+        document.getElementById('texto-resena').value = "";
+        marcarEstrellas(0); 
+    } else {
+        alert("¡Cuidado! Selecciona las estrellas, pon tu nombre y tu comentario.");
+    }
+}
+let serviciosBarberia = JSON.parse(localStorage.getItem('misServicios')) || [
+    { nombre: "Corte de prueba", precio: 10000 }
+];
+</script>
+
+<button onclick="logout()" style="position: fixed; bottom: 10px; left: 10px; z-index: 999; padding: 10px; background: #111; color: white; border: 1px solid #d4af37; cursor: pointer; border-radius: 5px;">
+    Cerrar Sesión (Como cliente)
+</button>
+
+<script>
+    function logout() {
+        localStorage.removeItem('perfil_brothers');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</html> 

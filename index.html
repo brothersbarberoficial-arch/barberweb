@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a Brother's</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .contenedor {
+            text-align: center;
+            padding: 40px;
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            background: #111;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+        h1 { color: #d4af37; margin-bottom: 30px; }
+        .btn {
+            display: block;
+            width: 200px;
+            padding: 15px;
+            margin: 15px auto;
+            border: 2px solid #d4af37;
+            background: transparent;
+            color: #d4af37;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #d4af37; color: #000; }
+        .login-admin { display: none; margin-top: 20px; }
+        input {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #d4af37;
+            background: #000;
+            color: #fff;
+        }
+       @media (max-width: 600px) {
+    /* 1. BLINDAJE DEL PANEL (Lo que ya te funcionó) */
+    .contenedor, .panel-seccion {
+        width: 95% !important;
+        padding: 25px !important; /* Mantiene el texto separado de los bordes */
+        margin: 15px auto !important; /* Centra los recuadros con espacio entre ellos */
+        box-sizing: border-box !important; /* Evita que el recuadro se desborde */
+    }
+
+    /* 2. PROTECCIÓN DEL ENCABEZADO (Para que no tape el título) */
+    body {
+        /* Empuja todo el contenido hacia abajo para que el logo blanco no tape nada */
+        padding-top: 150px !important; 
+    }
+
+    header {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999; /* Asegura que el menú siempre esté arriba de todo */
+        background-color: white !important;
+        height: auto !important;
+    }
+
+    /* 3. SEPARACIÓN DE BOTONES (WhatsApp vs Cerrar Sesión) */
+    
+    /* Le damos espacio al botón de cerrar sesión para que no esté pegado */
+    .btn-cerrar-sesion, button[onclick="cerrarSesion()"] {
+        margin-top: 50px !important; 
+        margin-bottom: 80px !important; /* Espacio extra al final para poder hacer scroll */
+        width: 100% !important;
+        display: block !important;
+    }
+
+    /* Movemos el icono de WhatsApp a una posición segura */
+    /* Si tu botón de WhatsApp tiene otra clase, asegúrate de usarla aquí */
+    .btn-whatsapp, a[href*="wa.me"] {
+        bottom: 140px !important; /* Lo subimos para que no estorbe al botón de abajo */
+        right: 20px !important;
+        position: fixed !important;
+        z-index: 998;
+    }
+
+    /* 4. AJUSTE DE BOTONES DE SERVICIOS */
+    button {
+        height: auto !important;
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <script>
+        
+        const perfil = localStorage.getItem('perfil_brothers');
+        if (perfil === 'cliente') {
+            window.location.href = "mi_barberia.html";
+        } else if (perfil === 'barbero') {
+            window.location.href = "admin.html";
+        }
+    </script>
+
+    <div class="contenedor">
+        <h1>BROTHER'S BARBER SHOP</h1>
+        <p>Selecciona tu perfil para ingresar:</p>
+        
+        <button class="btn" onclick="seleccionar('cliente')">SOY CLIENTE</button>
+        <button class="btn" onclick="mostrarLogin()">SOY BARBERO</button>
+
+        <div id="login" class="login-admin">
+            <input type="password" id="pass" placeholder="Contraseña Admin">
+            <button class="btn" style="width: 100px;" onclick="seleccionar('barbero')">ENTRAR</button>
+        </div>
+    </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCMQoOf2gniGLOWAhQXuwl0TYPwtzXk1j8",
+    authDomain: "brothersbarber-dc120.firebaseapp.com",
+    projectId: "brothersbarber-dc120",
+    storageBucket: "brothersbarber-dc120.appspot.com",
+    messagingSenderId: "999313470063",
+    appId: "1:999313470063:web:98f3050477b86dda3cd39a"
+  };
+
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+async function seleccionar(tipo) {
+    if (tipo === 'barbero') {
+        const passIngresada = document.getElementById('pass').value;
+        
+        try {
+            const doc = await db.collection('configuracion').doc('acceso').get();
+            
+            const claveReal = doc.exists ? doc.data().pass : "1234";
+
+            if (passIngresada !== claveReal) {
+                alert("Contraseña incorrecta");
+                return;
+            }
+        } catch (error) {
+            console.error("Error al consultar Firebase:", error);
+            if (passIngresada !== "1234") {
+                alert("Contraseña incorrecta (Modo offline)");
+                return;
+            }
+        }
+    }
+
+    localStorage.setItem('perfil_brothers', tipo);
+    window.location.href = (tipo === 'cliente') ? "mi_barberia.html" : "admin.html";
+}
+</script>
+    <script>
+        function mostrarLogin() {
+            document.getElementById('login').style.display = 'block';
+        }
+
+    </script>
+</body>
+</html>

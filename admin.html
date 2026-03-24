@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Barbería</title>
+    <style>
+
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    padding-top: 5vh;     
+}
+       .panel {
+    background: #222;
+    padding: 15px 30px;      
+    border-radius: 10px;
+    border: 1px solid #d4af37;
+    display: inline-block; 
+    margin-bottom: 50px;     
+    text-align: center;
+}
+        .btn-cerrar { background: red; color: white; border: none; padding: 10px 20px; cursor: pointer; margin-top: 20px; border-radius: 5px; }
+        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        th, td { border: 1px solid #444; padding: 10px; text-align: left; }
+        th { background: #333; color: #d4af37; }
+
+        .boton-menu-acordeon {
+    width: 90%;          
+    max-width: 500px;   
+    display: block;      
+    margin: 10px auto;   
+    background: #1a1a1a;
+    color: #d4af37;
+    padding: 20px;
+    border: 1px solid #d4af37;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.boton-menu-acordeon:hover {
+    background: #d4af37;
+    color: #000;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+
+.contenido-persiana {
+   display: none;  
+    background-color: #222; 
+    border: 1px solid #d4af37; 
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10px;     
+    width: 90%;          
+    max-width: 550px;    
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+input[type="text"], 
+input[type="time"], 
+select {
+    background-color: #111 !important; 
+    color: #d4af37 !important;         
+    border: 1px solid #444 !important; 
+    border-radius: 5px !important;
+    padding: 8px !important;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+input[type="text"]:focus, 
+input[type="time"]:focus, 
+select:focus {
+    border: 1px solid #d4af37 !important; 
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+}
+
+.dia-check {
+    accent-color: #d4af37; 
+    cursor: pointer;
+}
+
+::placeholder {
+    color: #666;
+    font-style: italic;
+}
+
+.sidebar {
+    position: fixed; 
+    top: 0; 
+    left: -260px; /* Escondido por defecto */
+    width: 250px; 
+    height: 100%; 
+    background: #111; 
+    border-right: 2px solid #d4af37; 
+    transition: 0.4s; 
+    z-index: 999; 
+    padding-top: 60px; 
+    text-align: left;
+}
+.sidebar-header {
+    padding: 20px; 
+    color: #d4af37; 
+    font-weight: bold; 
+    border-bottom: 1px solid #333; 
+    text-align: center;
+}
+.menu-item {
+    padding: 15px 25px; 
+    color: white; 
+    cursor: pointer; 
+    border-bottom: 1px solid #222; 
+    transition: 0.3s;
+}
+.menu-item:hover { 
+    background: #d4af37; 
+    color: black; 
+}
+.logout { 
+    color: #ff4d4d; 
+    margin-top: 20px; 
+    font-weight: bold; 
+}
+
+/* Estilos para las ventanas flotantes (Modales) */
+.modal-personalizado {
+    display: none; 
+    position: fixed; 
+    z-index: 2000; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0,0,0,0.8);
+}
+.modal-contenido {
+    background-color: #222; 
+    margin: 10% auto; 
+    padding: 25px; 
+    border: 1px solid #d4af37; 
+    width: 80%; 
+    max-width: 400px; 
+    border-radius: 10px; 
+    color: white;
+}
+.cerrar { 
+    float: right; 
+    font-size: 28px; 
+    cursor: pointer; 
+    color: #d4af37; 
+}
+.input-modal { 
+    width: 90%; 
+    padding: 10px; 
+    background: #111; 
+    border: 1px solid #444; 
+    color: #d4af37; 
+    border-radius: 5px; 
+}
+.boton-guardar { 
+    background: #d4af37; 
+    color: black; 
+    border: none; 
+    padding: 10px 20px; 
+    font-weight: bold; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+@media (max-width: 600px) {
+    /* 1. BLINDAJE DEL PANEL (Lo que ya te funcionó) */
+    .contenedor, .panel-seccion {
+        width: 95% !important;
+        padding: 25px !important; /* Mantiene el texto separado de los bordes */
+        margin: 15px auto !important; /* Centra los recuadros con espacio entre ellos */
+        box-sizing: border-box !important; /* Evita que el recuadro se desborde */
+    }
+
+    /* 2. PROTECCIÓN DEL ENCABEZADO (Para que no tape el título) */
+    body {
+        /* Empuja todo el contenido hacia abajo para que el logo blanco no tape nada */
+        padding-top: 150px !important; 
+    }
+
+    header {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999; /* Asegura que el menú siempre esté arriba de todo */
+        background-color: white !important;
+        height: auto !important;
+    }
+
+    /* 3. SEPARACIÓN DE BOTONES (WhatsApp vs Cerrar Sesión) */
+    
+    /* Le damos espacio al botón de cerrar sesión para que no esté pegado */
+    .btn-cerrar-sesion, button[onclick="cerrarSesion()"] {
+        margin-top: 50px !important; 
+        margin-bottom: 80px !important; /* Espacio extra al final para poder hacer scroll */
+        width: 100% !important;
+        display: block !important;
+    }
+
+    /* Movemos el icono de WhatsApp a una posición segura */
+    /* Si tu botón de WhatsApp tiene otra clase, asegúrate de usarla aquí */
+    .btn-whatsapp, a[href*="wa.me"] {
+        bottom: 140px !important; /* Lo subimos para que no estorbe al botón de abajo */
+        right: 20px !important;
+        position: fixed !important;
+        z-index: 998;
+    }
+
+    /* 4. AJUSTE DE BOTONES DE SERVICIOS */
+    button {
+        height: auto !important;
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+    }
+}
+    </style>
+</head>
+<body>
+<div onclick="toggleSidebar()" style="position: fixed; top: 15px; left: 15px; z-index: 1000; cursor: pointer; color: #d4af37; background: #222; padding: 10px; border: 1px solid #d4af37; border-radius: 5px; font-weight: bold;">
+    ☰ MENÚ
+</div>
+
+<div id="sidebar-admin" class="sidebar">
+    <div class="sidebar-header">ADMINISTRACIÓN</div>
+    
+    <div class="menu-item">
+    <a href="mis-agendas.html" target="_blank" style="text-decoration: none; color: inherit;">
+        📅 Agenda del Día
+    </a>
+</div>
+    <div class="menu-item" onclick="mostrarSeguridad()">🔐 Seguridad / Contraseña</div>
+    <div class="menu-item logout" onclick="cerrarSesion()">🚪 Cerrar Sesión</div>
+</div>
+
+<div id="modal-agenda" class="modal-personalizado">
+    <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModales()">&times;</span>
+        <h3>🗓️ Citas Agendadas</h3>
+        <div id="lista-agenda">
+            <p style="color: #888;">Cargando citas de hoy...</p>
+            </div>
+    </div>
+</div>
+
+<div id="modal-seguridad" class="modal-personalizado">
+    <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModales()">&times;</span>
+        <h3>🔐 Cambiar Contraseña</h3>
+        <input type="password" id="pass-anterior" placeholder="Contraseña Anterior" class="input-modal"><br><br>
+        <input type="password" id="pass-nueva" placeholder="Nueva Contraseña" class="input-modal"><br><br>
+        <button class="boton-guardar" onclick="actualizarPassword()">Actualizar</button>
+    </div>
+</div>
+    <div class="panel">
+        <h1>💈 Panel del Barbero</h1>
+        <p>Bienvenido, aquí podrás gestionar tus servicios pronto.</p>
+        </div>
+    <button class="boton-menu-acordeon" onclick="gestionarPersiana('persiana-servicios')">
+    ✂️ Agregar o Actualizar Servicios
+</button>
+<div id="persiana-servicios" class="contenido-persiana">
+    <h3 style="color: #d4af37;">Gestión de Servicios</h3>
+    <input type="text" id="nombreServicio" placeholder="Nombre (ej: Corte + Barba)" style="padding: 8px; width: 45%;">
+    <input type="text" id="precioServicio" placeholder="Precio (ej: 25000)" style="padding: 8px; width: 45%;">
+    <br><br>
+    <button onclick="guardarServicio()" style="background: #d4af37; color: black; padding: 10px; cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px;">
+        Guardar Servicio
+    </button>
+    
+    <table style="width: 100%; color: white; margin-top: 20px; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid #d4af37;">
+                <th>Servicio</th>
+                <th>Precio</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoTabla">
+            </tbody>
+    </table>
+</div>
+</div>
+<button class="boton-menu-acordeon" onclick="gestionarPersiana('persiana-barberos')">
+    ➕ Registrar Nuevo Barbero / Nómina
+</button>
+<div id="persiana-barberos" class="contenido-persiana">
+    <h3 style="color: #d4af37;">Registrar Nuevo Barbero 💈</h3>
+    <input type="text" id="regNombre" placeholder="Nombre (Ej: Milton)" style="padding: 8px; width: 45%; margin: 5px;">
+    <input type="text" id="regUsuario" placeholder="Usuario (Ej: milton_barber)" style="padding: 8px; width: 45%; margin: 5px;">
+    <button onclick="crearPerfilBarbero()" style="background: #d4af37; color: black; padding: 12px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer;">
+        CREAR PERFIL DEL NUEVO BARBERO
+    </button>
+
+    <div style="margin-top: 20px;">
+        <h4 style="color: #d4af37; text-align: center;">Barberos en Nómina</h4>
+        <table style="width: 100%; color: white;">
+            <thead>
+                <tr style="border-bottom: 1px solid #d4af37;">
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="contenido_tabla_barberos">
+                </tbody>
+        </table>
+    </div>
+</div>
+</div>
+    <button class="boton-menu-acordeon" onclick="gestionarPersiana('persiana-horarios')">
+    ⏰ Configuración de Horarios Laborales
+</button>
+<div id="persiana-horarios" class="contenido-persiana">
+    <h3 style="color: #d4af37; margin-bottom: 15px;">Configuración de Horarios Laborales</h3>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; background: #1a1a1a; padding: 15px; border-radius: 8px;">
+        <p style="width: 100%; font-weight: bold; margin-bottom: 5px;">Días que trabajas:</p>
+        <label><input type="checkbox" class="dia-check" value="Lunes"> Lunes</label>
+        <label><input type="checkbox" class="dia-check" value="Martes"> Martes</label>
+        <label><input type="checkbox" class="dia-check" value="Miércoles"> Miércoles</label>
+        <label><input type="checkbox" class="dia-check" value="Jueves"> Jueves</label>
+        <label><input type="checkbox" class="dia-check" value="Viernes"> Viernes</label>
+        <label><input type="checkbox" class="dia-check" value="Sábado"> Sábado</label>
+        <label><input type="checkbox" class="dia-check" value="Domingo"> Domingo</label>
+    </div>
+
+    <div style="display: flex; gap: 20px;">
+        <div>
+            <label style="display: block;">Apertura:</label>
+            <input type="time" id="horaInicio" style="padding: 5px; border-radius: 5px;">
+        </div>
+        <div>
+            <label style="display: block;">Cierre:</label>
+            <input type="time" id="horaFin" style="padding: 5px; border-radius: 5px;">
+        </div>
+    </div>
+<div style="margin-top: 15px;">
+    <label style="color: white;">Frecuencia de citas:</label>
+    <select id="selector-intervalo" style="padding: 5px; border-radius: 5px;">
+        <option value="30">Cada 30 minutos</option>
+        <option value="45">Cada 45 minutos</option>
+    </select>
+</div>
+
+<div id="contenedor-horas" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;">
+    </div>
+    <button onclick="guardarHorarios()" style="margin-top: 20px; background: #d4af37; color: black; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 5px; width: 100%;">
+        Guardar Configuración de Agenda
+    </button>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+    const firebaseConfig = {
+  apiKey: "AIzaSyCMQo0f2gnIglOWAhQXuWl0tYPwtzXk1j8",
+  authDomain: "brothersbarber-dc120.firebaseapp.com",
+  projectId: "brothersbarber-dc120",
+  storageBucket: "brothersbarber-dc120.firebasestorage.app",
+  messagingSenderId: "999313470063",
+  appId: "1:999313470063:web:98f3050477b86dda3cd39a"
+};
+
+
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+  let servicios = [];
+
+   db.collection("servicios").onSnapshot((snapshot) => {
+    const tabla = document.getElementById("cuerpoTabla");
+    tabla.innerHTML = "";
+    
+    snapshot.forEach((doc) => {
+        const s = doc.data();
+        tabla.innerHTML += `
+            <tr>
+                <td>${s.nombre}</td>
+                <td>$${s.precio}</td>
+                <td>
+                    <button onclick="eliminarServicio('${doc.id}')" style="background:red; color:white; border:none; padding:5px; border-radius:3px; cursor:pointer;">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+});
+
+ async function guardarServicio() {
+    const nombre = document.getElementById("nombreServicio").value;
+    const precio = document.getElementById("precioServicio").value;
+
+    if (nombre !== "" && precio !== "") {
+        try {
+            
+            await db.collection("servicios").add({
+                nombre: nombre,
+                precio: precio,
+                fecha: new Date() 
+            });
+
+            alert("¡Servicio guardado en la nube! ☁️");
+            
+           
+            document.getElementById("nombreServicio").value = "";
+            document.getElementById("precioServicio").value = "";
+        } catch (error) {
+            console.error("Error al conectar:", error);
+            alert("Hubo un fallo al subir el servicio.");
+        }
+    } else {
+        alert("Por favor, completa ambos campos.");
+    }
+}
+    
+   async function eliminarServicio(id) {
+    if (confirm("¿Estás seguro de eliminar este servicio de la nube?")) {
+        try {
+            // 🗑️ Esto le dice a Google que borre el servicio con ese ID único
+            await db.collection("servicios").doc(id).delete();
+            alert("Servicio eliminado de la nube 🗑️");
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            alert("No se pudo eliminar el servicio.");
+        }
+    }
+}
+    
+    function cerrarSesion() {
+        localStorage.removeItem('perfil_brothers');
+        window.location.href = "index.html";
+    }
+function guardarHorarios() {
+        const diasSeleccionados = Array.from(document.querySelectorAll('.dia-check:checked')).map(cb => cb.value);
+        const inicio = document.getElementById('horaInicio').value;
+        const fin = document.getElementById('horaFin').value;
+
+        if (diasSeleccionados.length === 0 || !inicio || !fin) {
+            alert("Por favor, selecciona al menos un día y el rango de horas.");
+            return;
+        }
+
+        const configHorario = {
+            dias: diasSeleccionados,
+            inicio: inicio,
+            fin: fin
+        };
+
+        localStorage.setItem('configHorario', JSON.stringify(configHorario));
+        alert("¡Horario de atención actualizado correctamente!");
+    }
+
+    function cargarHorariosConfigurados() {
+        const config = JSON.parse(localStorage.getItem('configHorario'));
+        if (config) {
+            document.getElementById('horaInicio').value = config.inicio;
+            document.getElementById('horaFin').value = config.fin;
+            document.querySelectorAll('.dia-check').forEach(cb => {
+                if (config.dias.includes(cb.value)) cb.checked = true;
+            });
+        }
+    }
+
+
+    cargarHorariosConfigurados();
+
+    const urlCerebro = "https://script.google.com/macros/s/AKfycbzQ9npKxbS1vtGuBtFmhKjDNsIx2X1ozCgL-0tDwk4aW6TdmNrUsfbVdZoSkADt9nze/exec"; 
+
+// 1. Esta función genera los cuadritos de horas automáticamente
+function generarCuadricula() {
+    const inicio = document.getElementById('horaInicio').value || "09:00";
+    const fin = document.getElementById('horaFin').value || "22:00";
+    const intervalo = parseInt(document.getElementById('selector-intervalo').value);
+    const contenedor = document.getElementById('contenedor-horas');
+    
+    contenedor.innerHTML = ""; // Limpiar el contenedor
+
+    let [h, m] = inicio.split(':').map(Number);
+    let [hFin, mFin] = fin.split(':').map(Number);
+
+    while (h < hFin || (h === hFin && m < mFin)) {
+        let tiempo = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        
+        // Creamos cada cuadrito de hora
+        contenedor.innerHTML += `
+            <div style="background: #111; color: #d4af37; padding: 8px; border-radius: 5px; border: 1px solid #d4af37; display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" class="hora-check" value="${tiempo}" id="t-${tiempo}" checked>
+                <label for="t-${tiempo}" style="cursor:pointer; font-size: 14px; margin:0;">${tiempo}</label>
+            </div>
+        `;
+
+        m += intervalo;
+        if (m >= 60) { h++; m = 0; }
+    }
+}
+
+// 2. Esta función manda la configuración al Google Script
+async function guardarHorarios() {
+    // Sacamos los días marcados (usando tu clase 'dia-check')
+    const dias = Array.from(document.querySelectorAll('.dia-check:checked')).map(cb => cb.value.toLowerCase());
+    
+    // Sacamos las horas que el barbero dejó marcadas
+    const horasHabilitadas = Array.from(document.querySelectorAll('.hora-check:checked')).map(cb => cb.value);
+    
+    // Sacamos el intervalo (30 o 45)
+    const intervalo = document.getElementById('selector-intervalo').value;
+
+    if (dias.length === 0) {
+        alert("¡Ojo! Selecciona al menos un día de trabajo.");
+        return;
+    }
+
+    const data = {
+        tipo: "CONFIG",
+        dias: dias,
+        intervalo: intervalo,
+        horasHabilitadas: horasHabilitadas
+    };
+
+    try {
+        const response = await fetch(urlCerebro, {
+            method: "POST",
+            body: JSON.stringify(data)
+        });
+        alert("✅ ¡Configuración guardada! Ahora el cliente verá solo lo que elegiste.");
+    } catch (error) {
+        alert("❌ Hubo un error al guardar: " + error);
+    }
+}
+
+// 3. Hacemos que la página reaccione a los cambios
+document.getElementById('horaInicio').addEventListener('change', generarCuadricula);
+document.getElementById('horaFin').addEventListener('change', generarCuadricula);
+document.getElementById('selector-intervalo').addEventListener('change', generarCuadricula);
+
+// Generar la primera vez que abre la página
+window.onload = generarCuadricula;
+
+function mostrarSeccion(seccion) {
+    console.log("Intentando mostrar:", seccion);
+
+    // 1. Ocultamos todas las secciones
+    const secciones = ['tabla-barberos', 'seccion-barberos', 'seccion-config'];
+    secciones.forEach(id => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            elemento.style.display = 'none';
+        }
+    });
+
+   
+}
+// ==========================================
+// GESTIÓN DE BARBEROS Y CONFIGURACIÓN
+// ==========================================
+async function crearPerfilBarbero() {
+    // 1. Obtenemos los datos de los cuadritos (Inputs)
+    const nombre = document.getElementById('regNombre').value.trim();
+    const usuario = document.getElementById('regUsuario').value.trim().toLowerCase();
+    const correo = document.getElementById('regCorreo').value.trim();
+    const pass = document.getElementById('regPass').value.trim();
+    const descanso = document.getElementById('regDescanso').value;
+
+    // 2. Validamos que no estén vacíos
+    if (!nombre || !usuario || !correo || !pass) {
+        alert("¡Ojo! Tienes que llenar todos los campos antes de crear al barbero.");
+        return;
+    }
+
+    try {
+        console.log("Intentando guardar a:", nombre);
+        
+        // 3. Guardamos en Firebase (Colección 'barberos')
+        await db.collection("barberos").add({
+            nombre: nombre,
+            usuario: usuario,
+            correo: correo,
+            pass: pass,
+            descanso: descanso,
+            fechaRegistro: new Date()
+        });
+
+        alert("¡Éxito! " + nombre + " ya es parte del equipo.");
+        
+        // 4. Limpiamos los cuadritos para el siguiente
+        document.getElementById('regNombre').value = "";
+        document.getElementById('regUsuario').value = "";
+        document.getElementById('regCorreo').value = "";
+        document.getElementById('regPass').value = "";
+        
+    } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("Hubo un error al guardar en la base de datos.");
+    }
+}
+
+async function guardarConfiguracion() {
+    const nuevoCorreo = document.getElementById('confCorreo').value;
+    const nuevaPass = document.getElementById('passNueva').value;
+
+    if (!nuevoCorreo) {
+        alert("Por favor, ingresa al menos el correo.");
+        return;
+    }
+
+    try {
+        await db.collection('configuracion').doc('admin').set({
+            correo: nuevoCorreo,
+            password: nuevaPass,
+            ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+       alert("✅ ¡Configuración guardada! Entrando a sección de barberos...");
+        
+        // Intentamos cerrar la ventana solo si el ID es correcto
+        const modal = document.getElementById('modalConfiguracion') || document.querySelector('.modal');
+        if (modal) modal.style.display = 'none';
+        
+        // Forzamos la aparición de la sección de barberos
+        // Probamos con varios nombres comunes por si acaso
+        const seccion = document.getElementById('seccion-barberos') || document.getElementById('barberos');
+        
+        if (typeof mostrarSeccion === "function") {
+            mostrarSeccion('barberos');
+        } else if (seccion) {
+            seccion.style.display = 'block';
+        } else {
+            // Si nada de lo anterior funciona, recargamos para limpiar
+            location.reload();
+        }
+
+    } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("Error al guardar: " + error.message);
+    }
+}
+
+// ==========================================
+// INICIO AUTOMÁTICO AL CARGAR PÁGINA
+// ==========================================
+window.onload = async function() {
+    const miUsuario = localStorage.getItem('perfil_brothers');
+    if (!miUsuario) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    try {
+        const doc = await db.collection("usuarios").doc(miUsuario).get();
+        if (doc.exists) {
+            const datos = doc.data();
+            if (datos.rol === "admin") {
+                const btn = document.getElementById('btnAdmin');
+                if (btn) btn.style.display = 'block';
+            }
+            if (document.getElementById('confCorreo')) {
+                document.getElementById('confCorreo').value = datos.correo || "";
+            }
+        }
+    } catch (e) { console.error(e); }
+
+    // Ejecutamos tus funciones originales de la agenda
+    if (typeof generarCuadricula === 'function') generarCuadricula();
+    if (typeof cargarHorariosConfigurados === 'function') cargarHorariosConfigurados();
+};
+
+function consultarBarberos() {
+    console.log("Intentando conectar con Firebase para traer barberos...");
+    
+    // Verificamos que 'db' exista (Firebase)
+    if (typeof db === 'undefined') {
+        console.error("Error: Firebase (db) no está definido.");
+        return;
+    }
+
+    db.collection("barberos").onSnapshot((querySnapshot) => {
+        // Usamos el ID exacto que pusiste en el HTML: contenido_tabla_barberos
+        const tablaBody = document.getElementById('contenido_tabla_barberos');
+        
+        if (!tablaBody) {
+            console.error("No encontré el ID 'contenido_tabla_barberos' en el HTML");
+            return;
+        }
+
+        tablaBody.innerHTML = ""; 
+        
+        if (querySnapshot.empty) {
+            console.log("No hay barberos en la base de datos.");
+            tablaBody.innerHTML = "<tr><td colspan='3' style='padding:10px;'>No hay barberos registrados</td></tr>";
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const barbero = doc.data();
+            tablaBody.innerHTML += `
+                <tr style="text-align: center; border-bottom: 1px solid #444;">
+                    <td style="padding: 10px;">${barbero.nombre || 'Sin nombre'}</td>
+                    <td style="padding: 10px;">${barbero.usuario || 'Sin usuario'}</td>
+                    <td style="padding: 10px;">
+                        <button onclick="eliminarBarbero('${doc.id}')" style="background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+        console.log("¡Tabla de barberos actualizada!");
+    }, (error) => {
+        console.error("Error al obtener barberos: ", error);
+    });
+}
+consultarBarberos();
+
+function gestionarPersiana(idSeccion) {
+    const seccion = document.getElementById(idSeccion);
+    
+    if (seccion.style.display === "none" || seccion.style.display === "") {
+        seccion.style.display = "block"; 
+        
+        if(idSeccion === 'persiana-barberos' && typeof consultarBarberos === 'function') {
+            consultarBarberos();
+        }
+    } else {
+        seccion.style.display = "none"; 
+    }
+}
+function toggleSidebar() {
+    const side = document.getElementById('sidebar-admin');
+    if (side.style.left === '0px') {
+        side.style.left = '-260px';
+    } else {
+        side.style.left = '0px';
+    }
+}
+
+function cerrarModales() {
+    document.getElementById('modal-agenda').style.display = 'none';
+    document.getElementById('modal-seguridad').style.display = 'none';
+}
+
+function mostrarAgenda() {
+    cerrarModales();
+    toggleSidebar();
+    document.getElementById('modal-agenda').style.display = 'block';
+}
+
+function mostrarSeguridad() {
+    cerrarModales();
+    toggleSidebar();
+    document.getElementById('modal-seguridad').style.display = 'block';
+}
+
+async function actualizarPassword() {
+    const antigua = document.getElementById('pass-anterior').value;
+    const nueva = document.getElementById('pass-nueva').value;
+
+    if (antigua === "" || nueva === "") {
+        alert("Por favor llena ambos campos");
+        return;
+    }
+
+    try {
+        // 1. Traer la clave actual desde Firebase para validar
+        const doc = await db.collection('configuracion').doc('acceso').get();
+        let claveReal = "1234"; // Clave inicial si Firebase está vacío
+
+        if (doc.exists) {
+            claveReal = doc.data().pass;
+        }
+
+        // 2. ¿La contraseña "anterior" coincide con la de la nube?
+        if (antigua !== claveReal) {
+            alert("La contraseña anterior es incorrecta");
+            return;
+        }
+
+        // 3. GUARDADO EN FIREBASE (Esto sincroniza PC y Celular)
+        await db.collection('configuracion').doc('acceso').set({
+            pass: nueva
+        });
+
+        // Opcional: limpiar también el localStorage viejo para evitar conflictos
+        localStorage.removeItem('admin_pass');
+
+        alert("¡Éxito! Contraseña actualizada en la nube. Ya puedes usarla en tu celular.");
+        
+        // Limpiar campos y cerrar
+        document.getElementById('pass-anterior').value = "";
+        document.getElementById('pass-nueva').value = "";
+        cerrarModales();
+
+    } catch (error) {
+        console.error("Error al conectar con Firebase:", error);
+        alert("Hubo un error al guardar en la nube. Revisa tu internet.");
+    }
+}
+function cerrarSesion() {
+    if (confirm("¿Estás seguro de que quieres cerrar sesión?")) {
+        localStorage.removeItem('perfil_brothers'); 
+        console.log("Cerrando sesión y volviendo al inicio...");
+        window.location.replace("index.html"); 
+    }
+}
+
+async function crearPerfilBarbero() {
+    const nombre = document.getElementById('regNombre').value;
+    const usuario = document.getElementById('regUsuario').value;
+
+    if (!nombre || !usuario) {
+        alert("Por favor, llena todos los campos de la nómina.");
+        return;
+    }
+
+    try {
+        await db.collection("barberos").add({
+            nombre: nombre,
+            usuario: usuario.toLowerCase().trim(),
+            fechaRegistro:new Date()
+        });
+        document.getElementById('regNombre').value = "";
+        document.getElementById('regUsuario').value = "";
+        alert("Barbero agregado a la nómina con éxito. 💈");
+    } catch (error) {
+        console.error("Error al registrar barbero: ", error);
+    }
+}
+
+// 2. Cargar barberos en la tabla en tiempo real
+db.collection("barberos").orderBy("nombre", "asc").onSnapshot((snapshot) => {
+    const tablaBarberos = document.getElementById("contenido_tabla_barberos");
+    tablaBarberos.innerHTML = ""; 
+
+    snapshot.forEach((doc) => {
+        const barbero = doc.data();
+        const id = doc.id;
+
+        const fila = `
+            <tr>
+                <td>${barbero.nombre}</td>
+                <td>${barbero.usuario}</td>
+                <td>
+                    <button onclick="eliminarBarbero('${id}')" style="background:#ff4d4d; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        `;
+        tablaBarberos.innerHTML += fila;
+    });
+});
+
+// 3. Eliminar barbero de la nómina
+function eliminarBarbero(id) {
+    if (confirm("¿Estás seguro de eliminar a este barbero?")) {
+        db.collection("barberos").doc(id).delete()
+        .then(() => console.log("Barbero eliminado"))
+        .catch((error) => alert("Error al eliminar: " + error));
+    }
+}
+</script>
+</body>
+</html>
