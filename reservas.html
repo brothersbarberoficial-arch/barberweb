@@ -176,9 +176,9 @@
                 const s = doc.data();
                 const item = document.createElement("div");
                 item.className = "dropdown-item";
-                item.innerHTML = `<span>${s.nombre}</span><span style="color:#d4af37">$${s.precio}</span>`;
+                item.innerHTML = `<span>${s.nombre} (${s.tiempo} min)</span><span style="color:#d4af37">$${s.precio}</span>`;
                 item.onclick = () => {
-                    document.getElementById("dropdown-header").querySelector("span").innerText = s.nombre;
+                    document.getElementById("dropdown-header").querySelector("span").innerText = `${s.nombre} (${s.tiempo} min)`;
                     document.getElementById("servicio-elegido").value = s.nombre;
                     document.getElementById("custom-dropdown").classList.remove("open");
                 };
