@@ -276,9 +276,11 @@ select:focus {
 </button>
 <div id="persiana-servicios" class="contenido-persiana">
     <h3 style="color: #d4af37;">Gestión de Servicios</h3>
-    <input type="text" id="nombreServicio" placeholder="Nombre (ej: Corte + Barba)" style="padding: 8px; width: 45%;">
-    <input type="text" id="precioServicio" placeholder="Precio (ej: 25000)" style="padding: 8px; width: 45%;">
-    <br><br>
+   <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+    <input type="text" id="nombreServicio" placeholder="Nombre" style="padding: 8px; flex: 1; background: #222; color: white; border: 1px solid #444; border-radius: 5px;">
+    <input type="text" id="precioServicio" placeholder="Precio" style="padding: 8px; flex: 1; background: #222; color: white; border: 1px solid #444; border-radius: 5px;">
+    <input type="number" id="tiempoServicio" placeholder="Minutos" style="padding: 8px; flex: 1; background: #222; color: white; border: 1px solid #444; border-radius: 5px;">
+</div>
     <button onclick="guardarServicio()" style="background: #d4af37; color: black; padding: 10px; cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px;">
         Guardar Servicio
     </button>
@@ -288,6 +290,7 @@ select:focus {
             <tr style="border-bottom: 2px solid #d4af37;">
                 <th>Servicio</th>
                 <th>Precio</th>
+                <th>Tiempo</th>
                 <th>Acción</th>
             </tr>
         </thead>
@@ -353,8 +356,11 @@ select:focus {
 <div style="margin-top: 15px;">
     <label style="color: white;">Frecuencia de citas:</label>
     <select id="selector-intervalo" style="padding: 5px; border-radius: 5px;">
-        <option value="30">Cada 30 minutos</option>
-        <option value="45">Cada 45 minutos</option>
+    <option value="30">Cada 30 minutos</option>
+    <option value="35">Cada 35 minutos</option>
+    <option value="40">Cada 40 minutos</option>
+    <option value="45">Cada 45 minutos</option>
+    <option value="50">Cada 50 minutos</option>
     </select>
 </div>
 
@@ -382,6 +388,7 @@ select:focus {
   }
   const db = firebase.firestore();
   let servicios = [];
+  let editandoID = null;
 
    db.collection("servicios").onSnapshot((snapshot) => {
     const tabla = document.getElementById("cuerpoTabla");
@@ -390,46 +397,86 @@ select:focus {
     snapshot.forEach((doc) => {
         const s = doc.data();
         tabla.innerHTML += `
-            <tr>
-                <td>${s.nombre}</td>
-                <td>$${s.precio}</td>
-                <td>
-                    <button onclick="eliminarServicio('${doc.id}')" style="background:red; color:white; border:none; padding:5px; border-radius:3px; cursor:pointer;">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-        `;
+<tr>
+        <td style="padding: 10px; border-bottom: 1px solid #444;">${s.nombre}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #444;">$${s.precio}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #444;">${s.tiempo || '0'} min</td> 
+      <td style="padding: 10px; border-bottom: 1px solid #444; display: flex; gap: 5px; justify-content: center;">
+    <button onclick="prepararEdicion('${doc.id}', '${s.nombre}', '${s.precio}', '${s.tiempo}')" 
+            style="background: #2196F3; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+        Editar
+    </button>
+    
+    <button onclick="eliminarServicio('${doc.id}')" 
+            style="background: red; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+        Eliminar
+    </button>
+</td>
+    </tr>
+`;
     });
 });
 
- async function guardarServicio() {
+async function guardarServicio() {
     const nombre = document.getElementById("nombreServicio").value;
     const precio = document.getElementById("precioServicio").value;
+    const tiempo = document.getElementById("tiempoServicio").value; // <--- Nueva línea
 
-    if (nombre !== "" && precio !== "") {
-        try {
-            
-            await db.collection("servicios").add({
-                nombre: nombre,
-                precio: precio,
-                fecha: new Date() 
-            });
+    if (nombre !== "" && precio !== "" && tiempo !== "") { // <--- Agregamos tiempo al check
+       try {
+            if (editandoID) {
+                // --- MODO EDICIÓN ---
+                await db.collection("servicios").doc(editandoID).update({
+                    nombre: nombre,
+                    precio: precio,
+                    tiempo: tiempo
+                });
+                
+                editandoID = null; // Limpiamos el ID después de editar
+                alert("¡Servicio actualizado correctamente! ✅");
+                
+                // Regresamos el botón a su estado normal (Amarillo)
+                const btn = document.querySelector("button[onclick='guardarServicio()']");
+                btn.innerText = "Guardar Servicio";
+                btn.style.background = "#d4af37";
+            } else {
+                // --- MODO CREAR NUEVO (Lo que ya tenías) ---
+                await db.collection("servicios").add({
+                    nombre: nombre,
+                    precio: precio,
+                    tiempo: tiempo,
+                    fecha: new Date()
+                });
+                alert("¡Servicio guardado en la nube! ☁️");
+            }
 
-            alert("¡Servicio guardado en la nube! ☁️");
-            
-           
+            // Limpiamos los campos (Esto ya lo tenías en la línea 437)
             document.getElementById("nombreServicio").value = "";
             document.getElementById("precioServicio").value = "";
+            document.getElementById("tiempoServicio").value = "";
+
         } catch (error) {
-            console.error("Error al conectar:", error);
-            alert("Hubo un fallo al subir el servicio.");
+            console.error("Error al procesar el servicio:", error);
+            alert("Hubo un fallo en la operación.");
         }
     } else {
-        alert("Por favor, completa ambos campos.");
+        alert("Por favor, completa los tres campos (Nombre, Precio y Tiempo).");
     }
-}
+    function prepararEdicion(id, nombre, precio, tiempo) {
+    // 1. Subimos los datos a los cuadritos (Inputs)
+    document.getElementById('nombreServicio').value = nombre;
+    document.getElementById('precioServicio').value = precio;
+    document.getElementById('tiempoServicio').value = tiempo;
     
+    // 2. Guardamos el ID para saber cuál vamos a actualizar
+    editandoID = id;
+    
+    // 3. Cambiamos el estilo del botón para avisar que estamos editando
+    const btn = document.querySelector("button[onclick='guardarServicio()']");
+    btn.innerText = "Actualizar Servicio 📝";
+    btn.style.background = "#4CAF50"; // Verde
+}
+}
    async function eliminarServicio(id) {
     if (confirm("¿Estás seguro de eliminar este servicio de la nube?")) {
         try {
@@ -520,7 +567,7 @@ async function guardarHorarios() {
     const horasHabilitadas = Array.from(document.querySelectorAll('.hora-check:checked')).map(cb => cb.value);
     
     // Sacamos el intervalo (30 o 45)
-    const intervalo = document.getElementById('selector-intervalo').value;
+    const intervalo = parseInt(document.getElementById('selector-intervalo').value);
 
     if (dias.length === 0) {
         alert("¡Ojo! Selecciona al menos un día de trabajo.");
@@ -548,7 +595,11 @@ async function guardarHorarios() {
 // 3. Hacemos que la página reaccione a los cambios
 document.getElementById('horaInicio').addEventListener('change', generarCuadricula);
 document.getElementById('horaFin').addEventListener('change', generarCuadricula);
-document.getElementById('selector-intervalo').addEventListener('change', generarCuadricula);
+document.getElementById('selector-intervalo').addEventListener('change', function() {
+    frecuenciaCitas = parseInt(this.value);
+    generarCuadricula(); 
+    console.log("Cambiado a: " + frecuenciaCitas);
+});
 
 // Generar la primera vez que abre la página
 window.onload = generarCuadricula;
@@ -871,6 +922,29 @@ function eliminarBarbero(id) {
         .then(() => console.log("Barbero eliminado"))
         .catch((error) => alert("Error al eliminar: " + error));
     }
+}
+function cambiarFrecuencia(minutos) {
+        frecuenciaCitas = minutos;
+        alert("Frecuencia cambiada a " + minutos + " minutos ✂️");
+
+        db.collection("configuracion").doc("agenda").set({
+            frecuencia: minutos
+        }, { merge: true });
+    }
+
+    function prepararEdicion(id, nombre, precio, tiempo) {
+    // 1. Subimos los datos a los inputs (usando los IDs que se ven en tu foto f38b51.jpg)
+    document.getElementById('nombreServicio').value = nombre;
+    document.getElementById('precioServicio').value = precio;
+    document.getElementById('tiempoServicio').value = tiempo;
+    
+    // 2. Guardamos el ID para saber cuál actualizar después
+    editandoID = id;
+    
+    // 3. Cambiamos el texto del botón para que el barbero sepa que está editando
+    const btn = document.querySelector("button[onclick='guardarServicio()']");
+    btn.innerText = "Actualizar Servicio";
+    btn.style.background = "#4CAF50"; // Lo ponemos verde
 }
 </script>
 </body>
